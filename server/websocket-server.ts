@@ -80,16 +80,8 @@ function readRequesterUserId(request: http.IncomingMessage): string | null {
   return USER_ID_PATTERN.test(normalized) ? normalized : null;
 }
 
-function canDeleteDocument(
-  ownerId: string | null,
-  requesterUserId: string | null,
-): boolean {
-  if (!ownerId) {
-    // backward compatibility for legacy docs without owner metadata
-    return true;
-  }
-
-  return requesterUserId === ownerId;
+function canDeleteDocument(): boolean {
+  return true;
 }
 
 class SharedDoc extends Y.Doc {
@@ -455,9 +447,7 @@ function countDocumentsOwnedBy(ownerId: string): number {
   return ownedIds.size;
 }
 
-function buildDocumentDirectory(
-  requesterUserId: string | null,
-): DocumentDirectoryItem[] {
+function buildDocumentDirectory(): DocumentDirectoryItem[] {
   const now = new Date().toISOString();
   const directoryById = new Map<string, DocumentDirectoryItem>();
 
@@ -465,18 +455,18 @@ function buildDocumentDirectory(
     directoryById.set(entry.id, {
       ...entry,
       status: docs.has(entry.id) ? "active" : "stored",
-      canDelete: canDeleteDocument(entry.ownerId, requesterUserId),
+      canDelete: canDeleteDocument(),
     });
   }
 
-  for (const [docId, doc] of docs) {
+  for (const docId of docs.keys()) {
     if (!directoryById.has(docId)) {
       directoryById.set(docId, {
         id: docId,
         updatedAt: now,
         sizeBytes: 0,
         status: "active",
-        canDelete: canDeleteDocument(doc.ownerId, requesterUserId),
+        canDelete: canDeleteDocument(),
       });
     }
   }
@@ -524,7 +514,7 @@ const server = http.createServer((request, response) => {
   const requesterUserId = readRequesterUserId(request);
 
   if (request.method === "GET" && pathname === "/documents") {
-    sendJson(response, 200, { documents: buildDocumentDirectory(requesterUserId) });
+    sendJson(response, 200, { documents: buildDocumentDirectory() });
     return;
   }
 
@@ -608,7 +598,7 @@ const server = http.createServer((request, response) => {
           updatedAt: new Date().toISOString(),
           sizeBytes: 0,
           status: "active",
-          canDelete: canDeleteDocument(activeDoc.ownerId, requesterUserId),
+          canDelete: canDeleteDocument(),
         },
       });
       return;
@@ -624,30 +614,16 @@ const server = http.createServer((request, response) => {
       document: {
         ...persisted,
         status: "stored",
-        canDelete: canDeleteDocument(persisted.ownerId, requesterUserId),
+        canDelete: canDeleteDocument(),
       },
     });
     return;
   }
 
   if (request.method === "DELETE" && pathname.startsWith("/documents/")) {
-    if (!requesterUserId) {
-      sendJson(response, 401, { error: "invalid_user_id" });
-      return;
-    }
-
     const documentId = decodeURIComponent(pathname.slice("/documents/".length));
     if (!DOCUMENT_ID_PATTERN.test(documentId)) {
       sendJson(response, 400, { error: "invalid_document_id" });
-      return;
-    }
-
-    const activeDoc = docs.get(documentId);
-    const ownerId =
-      activeDoc?.ownerId ?? getPersistedDocumentOwner(documentId);
-
-    if (!canDeleteDocument(ownerId, requesterUserId)) {
-      sendJson(response, 403, { error: "forbidden_not_owner" });
       return;
     }
 

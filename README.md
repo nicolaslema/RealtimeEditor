@@ -16,7 +16,7 @@ Crear una experiencia tipo documento compartido donde varias personas puedan edi
 - Indicador de typing por usuario.
 - Historial de cambios con vista resumida + página completa.
 - Creación, apertura y borrado de documentos desde UI.
-- Regla de ownership: solo el creador puede borrar.
+- Borrado permitido para cualquier usuario con acceso al documento.
 - Biblioteca privada por navegador (solo documentos conocidos por el usuario).
 - Persistencia de documentos en backend realtime.
 - Límite de creación de documentos por usuario.
