@@ -1,139 +1,99 @@
 # Collaborative Editor
+<p align="center">
+  <img src="./thumbnail.png" alt="Collaborative Editor Thumbnail" width="900" />
+</p>
 
-Editor colaborativo en tiempo real con:
-- Next.js + React + TypeScript
-- TipTap
-- Yjs (CRDT)
-- WebSocket server propio
+Editor colaborativo en tiempo real para portafolio, construido con Next.js + TipTap + Yjs + WebSocket.
 
-## Estado actual
+## Idea
 
-- Edición colaborativa en tiempo real.
-- Presencia de usuarios + typing indicators.
-- Historial de cambios en UI.
-- Compartir documento por URL.
-- Persistencia de snapshots en el servidor realtime (archivo en disco).
-- Biblioteca privada de documentos desde UI (listar, abrir y borrar IDs conocidos por navegador).
+Crear una experiencia tipo documento compartido donde varias personas puedan editar el mismo contenido en simultáneo, ver presencia de usuarios y compartir por link.
 
-## Requisitos
+## Capacidades actuales
 
+- Edición colaborativa en tiempo real (bidireccional).
+- Cursores/presencia de usuarios conectados.
+- Indicador de typing por usuario.
+- Historial de cambios con vista resumida + página completa.
+- Creación, apertura y borrado de documentos desde UI.
+- Regla de ownership: solo el creador puede borrar.
+- Biblioteca privada por navegador (solo documentos conocidos por el usuario).
+- Persistencia de documentos en backend realtime.
+- Límite de creación de documentos por usuario.
+- Tema claro/oscuro.
+
+## Stack
+
+- Frontend: Next.js (App Router), React, TypeScript, Tailwind.
+- Editor: TipTap.
+- Realtime: Yjs + y-websocket protocol.
+- Backend realtime: Node.js + ws.
+- Deploy objetivo: Vercel (frontend) + Railway (backend realtime).
+
+## Quickstart
+
+Requisitos:
 - Node.js 22+
 - pnpm 10+
 
-## Instalación
+Instalar:
 
 ```bash
 pnpm install
 ```
 
-## Variables de entorno
+Configurar variables:
 
-Copiar `.env.example` y ajustar según tu entorno.
-
-Variables principales:
-- `NEXT_PUBLIC_WS_URL`: URL del websocket realtime para el frontend.
-- `NEXT_PUBLIC_WS_HTTP_URL`: URL HTTP para endpoints de biblioteca (`/documents`).
-- `HOST`: host de bind del server realtime.
-- `WS_PORT`: puerto del server realtime.
-- `WS_CORS_ORIGIN`: origen permitido para CORS en endpoints HTTP del server realtime.
-- `WS_PERSISTENCE_DIR`: carpeta de snapshots de documentos.
-- `WS_SAVE_DEBOUNCE_MS`: debounce de guardado de snapshots.
-- `WS_MAX_CONNECTIONS`: límite global de conexiones websocket.
-- `WS_MAX_CONNECTIONS_PER_DOC`: límite de conexiones websocket por documento.
-- `WS_MAX_ACTIVE_DOCS`: límite de documentos activos simultáneamente en memoria.
-- `WS_MAX_DOCS_PER_OWNER`: límite de documentos creados por usuario.
-- `WS_MAX_MESSAGE_BYTES`: tamaño máximo de mensaje websocket.
-- `WS_DOC_IDLE_TTL_MS`: tiempo de inactividad para evicción de docs sin conexiones.
-- `WS_DOC_EVICT_INTERVAL_MS`: intervalo del barrido de evicción por inactividad.
-- `WS_MEMORY_SOFT_LIMIT_MB`: umbral de memoria (RSS) para rechazar nuevas conexiones.
-
-## Desarrollo local
-
-En dos terminales:
-
-1. Server realtime:
 ```bash
-pnpm dev:ws
+cp .env.example .env.local
 ```
 
-2. Frontend:
+Levantar en local (2 terminales):
+
 ```bash
+pnpm dev:ws
 pnpm dev
 ```
 
-Abrir:
-- `http://localhost:3000`
-- `http://localhost:3000/doc/demo-doc-001` en dos pestañas para validar sync.
+Abrir `http://localhost:3000` y probar un documento en dos pestañas.
+
+## Variables relevantes
+
+Frontend:
+- `NEXT_PUBLIC_WS_URL` (ej: `ws://localhost:1234` o `wss://<backend>`)
+- `NEXT_PUBLIC_WS_HTTP_URL` (ej: `http://localhost:1234` o `https://<backend>`)
+
+Backend realtime:
+- `HOST`
+- `WS_PORT`
+- `WS_CORS_ORIGIN`
+- `WS_PERSISTENCE_DIR`
+- `WS_MAX_DOCS_PER_OWNER`
+- `WS_MAX_CONNECTIONS`
+- `WS_MAX_CONNECTIONS_PER_DOC`
+- `WS_MAX_ACTIVE_DOCS`
+- `WS_MEMORY_SOFT_LIMIT_MB`
+
+Referencia completa: `.env.example`.
 
 ## Scripts
 
-- `pnpm dev`: Next.js dev server
-- `pnpm dev:ws`: websocket server (desarrollo)
+- `pnpm dev`: frontend
+- `pnpm dev:ws`: websocket server (dev)
 - `pnpm build`: build frontend
-- `pnpm start`: levantar frontend build
+- `pnpm start`: frontend build
 - `pnpm start:ws`: websocket server (runtime)
-- `pnpm lint`: linting
+- `pnpm lint`: lint
 
-## Persistencia de documentos
+## Deploy (resumen)
 
-El websocket server guarda snapshots por `docId` en:
+- Frontend (Vercel): configurar `NEXT_PUBLIC_WS_URL` y `NEXT_PUBLIC_WS_HTTP_URL`.
+- Backend (Railway): usar `Dockerfile.ws` + volumen persistente en `/data`.
 
-`WS_PERSISTENCE_DIR/<docId>.bin`
+Guía completa: `Docs/DEPLOY_RUNBOOK.md`.
 
-Comportamiento:
-- carga snapshot al primer acceso del documento,
-- guarda en cada cambio con debounce,
-- flush final al cerrar proceso (`SIGINT`/`SIGTERM`).
+## Documentación útil
 
-## API HTTP del realtime server
-
-El mismo server realtime expone endpoints de gestión:
-
-- `GET /documents`: lista documentos persistidos/activos.
-- `GET /documents/:id`: consulta existencia/metadata de un documento.
-- `POST /documents`: crea documento explícitamente (requiere `id` válido).
-- `DELETE /documents/:id`: elimina snapshot y sesión activa del documento.
-  - Solo permitido para el creador del documento (`x-user-id`).
-
-## Lifecycle de documentos
-
-- Los documentos se crean explícitamente desde `GET /doc/new` (que invoca `POST /documents`).
-- `POST /documents` requiere header `x-user-id` para registrar creador y aplicar cuota por usuario.
-- Abrir `/doc/:id` valida existencia en el server realtime.
-- Si un documento fue borrado, no puede “recrearse” solo por abrir la URL.
-- La home muestra solo documentos conocidos por ese navegador (creados o abiertos por link).
-
-## Deploy
-
-### Frontend (Vercel)
-
-1. Conectar repo en Vercel.
-2. Configurar `NEXT_PUBLIC_WS_URL` apuntando al backend realtime productivo.
-3. Deploy.
-
-### Realtime server (Railway/Fly/Docker)
-
-Se incluye `Dockerfile.ws` (raíz) para deploy en Railway y `server/Dockerfile` para uso general.
-
-Ejemplo build/run local:
-```bash
-docker build -f Dockerfile.ws -t collaborative-editor-ws .
-docker run -p 1234:1234 -v ${PWD}/server/.data:/data collaborative-editor-ws
-```
-
-Variables recomendadas en producción:
-- `HOST=0.0.0.0`
-- `WS_PORT=1234` (o puerto asignado por plataforma)
-- `WS_PERSISTENCE_DIR=/data/documents`
-- `WS_SAVE_DEBOUNCE_MS=700`
-- `WS_MAX_CONNECTIONS=400`
-- `WS_MAX_CONNECTIONS_PER_DOC=32`
-- `WS_MAX_ACTIVE_DOCS=200`
-- `WS_MAX_DOCS_PER_OWNER=12`
-- `WS_MAX_MESSAGE_BYTES=1048576`
-- `WS_DOC_IDLE_TTL_MS=300000`
-- `WS_DOC_EVICT_INTERVAL_MS=30000`
-- `WS_MEMORY_SOFT_LIMIT_MB=768`
-
-Runbook completo de deploy y smoke test:
+- `Docs/ROADMAP_FASES_PRS.md`
+- `Docs/ARCHIVOS_ACTUALES_DETALLADO.md`
 - `Docs/DEPLOY_RUNBOOK.md`
