@@ -113,11 +113,11 @@ El mismo server realtime expone endpoints de gestión:
 
 ### Realtime server (Railway/Fly/Docker)
 
-Se incluye `server/Dockerfile` para deploy containerizado.
+Se incluye `Dockerfile.ws` (raíz) para deploy en Railway y `server/Dockerfile` para uso general.
 
 Ejemplo build/run local:
 ```bash
-docker build -f server/Dockerfile -t collaborative-editor-ws .
+docker build -f Dockerfile.ws -t collaborative-editor-ws .
 docker run -p 1234:1234 -v ${PWD}/server/.data:/data collaborative-editor-ws
 ```
 
