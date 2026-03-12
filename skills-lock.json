@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "react-state-management": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "76c3686478c0b3f60f5ee9b4626997a61605e1a625e16d31c906db99c9bc1a19"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3ff06f0712886f7c2660d6746856c22d3127bd6568ddde29ddad8b72dbaaa226"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "d8e7d3afe37dcc8a97b99ffb5afdb4d0919ae0092ea8b68f44eb201f035e33ac"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "5a6a18c0137cfbabec058e86fc1c8f6919d846a7b2a34ee978cc8ced866ee2e5"
+    },
+    "websocket-development": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "computedHash": "1ef400093361674085068a0798e8ddb65ef02d04ed5f6192094ed1aca47d4e56"
+    },
+    "yjs": {
+      "source": "epicenterhq/epicenter",
+      "sourceType": "github",
+      "computedHash": "2408d1d31aa949dda23afc2cdd68cf452beb0ff9808578ce4d53310de4d5b0d2"
+    }
+  }
+}

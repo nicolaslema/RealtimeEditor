@@ -1,8 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f8ff;
+  --foreground: #0b1220;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: #ffffff;
+  --surface-muted: #eef3ff;
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.24);
+  --text-muted: #334155;
+  --text-soft: #475569;
+  --ring-strong: rgba(37, 99, 235, 0.28);
+  --brand: #2563eb;
+  --brand-strong: #1d4ed8;
+  --danger: #dc2626;
+  --danger-bg: #fee2e2;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --background: #050914;
+  --foreground: #e5eefb;
+  --surface: rgba(16, 23, 39, 0.78);
+  --surface-strong: #0e1628;
+  --surface-muted: #0c1322;
+  --border-soft: rgba(148, 163, 184, 0.2);
+  --border-strong: rgba(148, 163, 184, 0.35);
+  --text-muted: #cbd5e1;
+  --text-soft: #94a3b8;
+  --ring-strong: rgba(56, 189, 248, 0.34);
+  --brand: #38bdf8;
+  --brand-strong: #0ea5e9;
+  --danger: #f87171;
+  --danger-bg: rgba(127, 29, 29, 0.3);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -12,15 +43,192 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--brand) 17%, transparent), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.16), transparent 48%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+.surface-card {
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  background: var(--surface);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06), 0 12px 36px rgba(15, 23, 42, 0.16);
+}
+
+.surface-muted {
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  background: var(--surface-muted);
+}
+
+.ui-label {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  padding: 0.45rem 0.7rem;
+  text-transform: uppercase;
+}
+
+.btn {
+  align-items: center;
+  border-radius: 0.7rem;
+  display: inline-flex;
+  font-size: 0.84rem;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1;
+  min-height: 2.65rem;
+  padding: 0.6rem 0.95rem;
+  transition: all 160ms ease;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.btn-primary {
+  background: var(--brand);
+  border: 1px solid var(--brand);
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-strong);
+  border-color: var(--brand-strong);
+}
+
+.btn-secondary {
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  color: var(--foreground);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--brand);
+}
+
+.btn-danger {
+  background: var(--surface-strong);
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+}
+
+.theme-toggle {
+  align-items: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.7rem;
+  color: var(--foreground);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  line-height: 1;
+  min-height: 2.2rem;
+  padding: 0.55rem 0.75rem;
+  transition: all 160ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+[data-theme="dark"] .prose,
+[data-theme="dark"] .prose :where(p, li, h1, h2, h3, h4, h5, h6, strong, em, blockquote, code) {
+  color: var(--foreground);
+}
+
+[data-theme="dark"] .text-zinc-950,
+[data-theme="dark"] .text-zinc-900,
+[data-theme="dark"] .text-zinc-800,
+[data-theme="dark"] .text-zinc-700,
+[data-theme="dark"] .text-zinc-600,
+[data-theme="dark"] .text-zinc-500 {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .text-zinc-900,
+[data-theme="dark"] .text-zinc-950,
+[data-theme="dark"] .font-semibold.text-zinc-900,
+[data-theme="dark"] .font-semibold.text-zinc-950 {
+  color: var(--foreground) !important;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--surface-strong) !important;
+}
+
+[data-theme="dark"] .bg-zinc-50 {
+  background-color: var(--surface-muted) !important;
+}
+
+[data-theme="dark"] .border-zinc-200,
+[data-theme="dark"] .border-zinc-300 {
+  border-color: var(--border-soft) !important;
+}
+
+.animate-fade-up {
+  animation: fade-up 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.collaboration-carets__caret {
+  border-left: 2px solid;
+  border-right: 0;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+}
+
+.collaboration-carets__label {
+  border-radius: 4px 4px 4px 0;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  left: -1px;
+  line-height: 1;
+  padding: 3px 6px;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
 }

@@ -4,20 +4,33 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:ws": "tsx server/websocket-server.ts",
     "build": "next build",
+    "start:ws": "tsx server/websocket-server.ts",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@tiptap/extension-collaboration": "^3.20.1",
+    "@tiptap/extension-collaboration-caret": "^3.20.1",
+    "@tiptap/react": "^3.20.1",
+    "@tiptap/starter-kit": "^3.20.1",
+    "lib0": "^0.2.117",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "tsx": "^4.21.0",
+    "ws": "^8.19.0",
+    "y-protocols": "^1.0.7",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.29"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
