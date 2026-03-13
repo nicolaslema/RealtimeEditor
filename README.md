@@ -94,6 +94,4 @@ Guía completa: `Docs/DEPLOY_RUNBOOK.md`.
 
 ## Documentación útil
 
-- `Docs/ROADMAP_FASES_PRS.md`
-- `Docs/ARCHIVOS_ACTUALES_DETALLADO.md`
-- `Docs/DEPLOY_RUNBOOK.md`
+- `docs/ARCHIVOS_ACTUALES_DETALLADO.md`
